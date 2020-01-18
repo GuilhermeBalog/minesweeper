@@ -32,7 +32,11 @@ const Game = {
     initField: function(){
         this.field = new Array(this.width * this.height)
         for (let i = 0; i < this.field.length; i++) {
-            this.field[i] = { opened: false, value: 0 }
+            this.field[i] = { 
+                value: 0,
+                opened: false, 
+                marked: false,
+            }
         }
     },
 
@@ -115,7 +119,30 @@ const Game = {
     },
 
     openCell: function (index) {
-        if (this.field[index].opened || this.gameOver) {
+
+        if (this.field[index].marked || this.gameOver) {
+            return
+        }
+
+        if(this.field[index].opened){
+            const aroundIndexes = this.getAroundIndexes(index)
+
+            const markedAroundIndexes = aroundIndexes.filter(i => {
+                return this.field[i].marked
+            })
+            
+            const closedAroundIndexes = aroundIndexes.filter(i => {
+                return this.field[i].opened == false
+            })
+
+            if(markedAroundIndexes.length > 0 && markedAroundIndexes.length == this.countBombs(index)){
+                console.log(closedAroundIndexes)
+                closedAroundIndexes.forEach(i => {
+                    if(!this.field[index].marked){
+                        this.openCell(i)
+                    }
+                })
+            }
             return
         }
 
@@ -174,9 +201,13 @@ const Game = {
         }
     },
 
+    toggleMarkCell: function(index){
+        this.field[index].marked = !this.field[index].marked
+    },
+
     resetGame: function(){
         this.gameOver = false
-        this.message = ""
+        this.message = "Minesweeper!"
         this.messageFunction = function(){}
         this.init()
         this.draw()
@@ -238,25 +269,44 @@ const Game = {
                 const index = (i * this.width) + j
                 const td = document.createElement('td')
 
-                let symbol = this.field[index].value
                 if(this.field[index].opened){
                     td.className = 'open'
                 } else {
                     td.className = 'closed'
                 }
+
+                let symbol = this.field[index].value
                 
                 if (symbol == 0) {
-                    td.style.color = this.colors["0"]
                     symbol = '&nbsp;'
+                    td.style.color = this.colors["0"]
                 } else if (symbol == -1) {
                     symbol = '&ofcir;'
                     td.style.color = this.colors.bomb
                 } else {
                     td.style.color = this.colors[symbol]
                 }
-                td.innerHTML = symbol
                 
-                td.onclick = () => this.openCell(index)
+                if (this.field[index].marked) {
+                    td.className = 'marked'
+                    symbol = '&trianglelefteq;'
+                    td.style.color = this.colors.bomb
+                }
+
+                td.innerHTML = symbol
+                td.id = 'cell-' + index
+                
+                td.onclick = () => {
+                    this.openCell(index)
+                }
+                td.onauxclick = (e) => {
+                    e.preventDefault()
+                    this.toggleMarkCell(index)
+                    this.draw()
+                }
+                td.oncontextmenu = (e) => {
+                    e.preventDefault()
+                }
 
                 tr.appendChild(td)
             }
