@@ -125,8 +125,8 @@ const Game = {
             this.messagePlayer('You lose! Click to play again')
             this.openAllBombs()
             this.messageFunction = this.resetGame
-            this.draw()
             this.gameOver = true
+            this.draw()
             return
         }
 
@@ -256,9 +256,7 @@ const Game = {
                 }
                 td.innerHTML = symbol
                 
-                // td.innerHTML = ` ${index} <br><strong>${symbol}</strong>`
-                td.id = `td-${index}`
-                td.onclick = (e) => this.openCell(e.target.id.split('-')[1])
+                td.onclick = () => this.openCell(index)
 
                 tr.appendChild(td)
             }
@@ -268,7 +266,7 @@ const Game = {
         const messageContainer = document.createElement('div')
         messageContainer.className = 'message'
         messageContainer.innerHTML = this.message
-        messageContainer.onclick = (e) => { this.messageFunction() }
+        messageContainer.onclick = () => { this.messageFunction() }
 
 
         const fieldContainer = document.createElement('main')
