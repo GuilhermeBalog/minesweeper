@@ -1,0 +1,123 @@
+*{
+    margin: 0;
+    padding: 0;
+    outline: 0;
+    box-sizing: border-box;
+}
+
+html, body{
+    height: 100%;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #ff6347;
+}
+
+#root{
+    display: flex;
+    min-height: 100%;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+aside{
+    background-color: #FFF;
+    padding: 2rem 1rem;
+}
+
+aside h1{
+    text-align: center;
+}
+
+.input-block{
+    margin: 1rem 0;
+}
+
+aside .input-block label{
+    display: block;
+    text-transform: capitalize;
+}
+
+aside .input-block input{
+    padding: 0.3rem;
+    width: 100%;
+}
+
+aside button{
+    width: 100%;
+    padding: 1rem 0;
+    border: 0;
+    background-color: #ff6347;
+    color: #FFF;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.5s;
+}
+
+button:hover{
+    background-color: #d34931;
+}
+
+table{
+    border-collapse: collapse;
+}
+
+td{
+    border-width: 0.3rem;
+    border-style: solid;
+    border-bottom-color: #808080;
+    border-right-color: #808080;
+    border-left-color: #ffffff;
+    border-top-color: #ffffff;
+    text-align: center;
+    cursor: pointer;
+    background-color: #cecece;
+    user-select: none;
+    font-weight: bold;
+    font-size: 1.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+td.closed{
+    color: rgba(0, 0, 0, 0) !important;
+}
+
+td.open{
+    background-color: #acacac;
+    border-width: 0.2rem;
+    cursor: default;
+}
+
+.message{
+    background-color: #cecece;
+    padding: 0.75rem;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #555454;
+    text-align: center;
+    border-width: 0.3rem;
+    border-style: solid;
+    border-bottom-color: #808080;
+    border-right-color: #808080;
+    border-left-color: #ffffff;
+    border-top-color: #ffffff;
+    cursor: pointer;
+}
+
+@media (max-width: 680px){
+    #root{
+        flex-direction: column-reverse;
+        /* justify-content: center; */
+        align-items: center;
+    }
+    main{
+        background-color: aquamarine;
+    }
+    aside{
+        padding: 1rem 1rem;
+        width: 90%;
+    }
+}
