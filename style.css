@@ -61,7 +61,8 @@ button:hover{
 }
 
 table{
-    border-collapse: collapse;
+    border-collapse: separate;
+    background-color: #808080;
 }
 
 td{
@@ -87,6 +88,7 @@ td.closed{
 
 td.open{
     background-color: #acacac;
+    border-color: #acacac;
     border-width: 0.2rem;
     cursor: default;
 }
