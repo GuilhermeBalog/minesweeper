@@ -26,12 +26,16 @@ const Game = {
     goodMessages: ['Good Work!', 'Fine moviment!', 'Keep this way!'],
     messageFunction: () => {},
     containerElement: document.querySelector('main'),
+    canvas: document.querySelector('canvas'),
 }
+
 // data methods
 function init(){
     initField()
     placeBombs()
     placeNumbers()
+    registerEventHandlers()
+    setCanvasDimensions()
 
     function initField(){
         Game.field = new Array(Game.width * Game.height)
@@ -59,6 +63,25 @@ function init(){
                 Game.field[i].value = countBombs(i)
             }
         }
+    }
+
+    function registerEventHandlers(){
+        Game.canvas.addEventListener('click', function(event){
+            handleEvent(event, openCell, Game.messageFunction)
+        })
+        
+        Game.canvas.addEventListener('auxclick', function(event){
+            handleEvent(event, toggleMarkCell)
+        })
+        
+        Game.canvas.addEventListener('contextmenu', function(event){
+            event.preventDefault()
+        })
+    }
+
+    function setCanvasDimensions(){
+        Game.canvas.width = Game.width * Game.cellSize;
+        Game.canvas.height = (Game.height + 1) * Game.cellSize;
     }
 }
 
@@ -130,42 +153,46 @@ function openCell(index) {
     }
 
     if(Game.field[index].opened){
+        openAroundCells(index)
+        return
+    }
+
+    Game.field[index].opened = true
+
+    if(hasBombAt(index)) {
+        finishGame()
+        return
+    }
+
+    if(Game.field[index].value == 0) {
+        emitGoodMessage()
+        openNonBombAroundCells(index)
+    }
+
+    checkWin()
+
+    function openAroundCells(index){
+        const numberOfBombs = Game.field[index].value
+        if(numberOfBombs == 0) return
+
         const aroundIndexes = getAroundIndexes(index)
 
-        const markedAroundIndexes = aroundIndexes.filter(i => {
-            return Game.field[i].marked
-        })
-        
-        const closedAroundIndexes = aroundIndexes.filter(i => {
-            return Game.field[i].opened == false
-        })
+        const markedAroundIndexes = aroundIndexes.filter(i => Game.field[i].marked)
+        if(markedAroundIndexes.length == 0) return
 
-        if(markedAroundIndexes.length > 0 && markedAroundIndexes.length == countBombs(index)){
+        const closedAroundIndexes = aroundIndexes.filter(i => !Game.field[i].opened)
+        if(closedAroundIndexes.length == 0) return
+
+        if(markedAroundIndexes.length == numberOfBombs){
             closedAroundIndexes.forEach(i => {
                 if(!Game.field[index].marked){
                     openCell(i)
                 }
             })
         }
-        return
     }
 
-    Game.field[index].opened = true
-
-    if (hasBombAt(index)) {
-        messagePlayer('You lose! Click to play again')
-        openAllBombs()
-        Game.messageFunction = resetGame
-        Game.gameOver = true
-        draw()
-
-        return
-    }
-
-    if (Game.field[index].value == 0) {
-        const randomGoodMessage = getRandomGoodMessage()
-        messagePlayer(randomGoodMessage)
-
+    function openNonBombAroundCells(index){
         const aroundIndexes = getAroundIndexes(parseInt(index))
         aroundIndexes.forEach(i => {
             if (Game.field[i].value != -1) {
@@ -173,14 +200,19 @@ function openCell(index) {
             }
         })
     }
-
-    draw()
-    checkWin()
 }
 
-function getRandomGoodMessage(){
+function finishGame(){
+    messagePlayer('You lose! Click to play again')
+    openAllBombs()
+    Game.messageFunction = resetGame
+    Game.gameOver = true
+}
+
+function emitGoodMessage(){
     const randomIndex = randomInt(0, Game.goodMessages.length)
-    return Game.goodMessages[randomIndex]
+    const randomGoodMessage = Game.goodMessages[randomIndex]
+    messagePlayer(randomGoodMessage)
 }
 
 function randomInt(min, max){
@@ -199,9 +231,10 @@ function checkWin () {
     const closedCells = Game.field.filter(cell => {
         return cell.opened == false
     })
+
     if (closedCells.length == Game.bombs) {
         messagePlayer('You Win! Click to Play again')
-        Game.messageFunction = Game.resetGame
+        Game.messageFunction = resetGame
         Game.gameOver = true
     }
 }
@@ -216,11 +249,11 @@ function resetGame(){
     Game.message = 'Minesweeper!'
     Game.messageFunction = function(){}
     init()
-    draw()
 }
 
 // render methods
 function draw(){
+    return
     Game.containerElement.innerHTML = ''
     const { table, message } = createFieldElement()
     Game.containerElement.appendChild(table)
@@ -232,10 +265,16 @@ function calculateIndex(i, j){
 }
 
 function drawInCanvas(){
-    const canvas = document.querySelector('canvas')
-    const context = canvas.getContext('2d')
-    context.clearRect(0, 0, canvas.width, canvas.height)
+    const context = Game.canvas.getContext('2d')
+    context.clearRect(0, 0, Game.canvas.width, Game.canvas.height)
     
+    drawField(context)
+    drawMessageBox(context)
+
+    requestAnimationFrame(() => { drawInCanvas() })
+}
+
+function drawField(context){
     for (let i = 0; i < Game.height; i++) {
         for (let j = 0; j < Game.width; j++) {
             const index = calculateIndex(i, j)
@@ -254,10 +293,6 @@ function drawInCanvas(){
             }
         }
     }
-
-    drawMessageBox(context)
-
-    requestAnimationFrame(() => { drawInCanvas() })
 }
 
 function drawClosedCell(context, x, y, width, height){
@@ -355,7 +390,7 @@ function drawOpenedCell(context, x, y, cellSize, color, symbol){
 
 function drawMark(context, x, y, cellSize){
     const textSize = 25
-    const textX = x + (cellSize / 2) - 10
+    const textX = x + (cellSize / 2)
     const textY = y + (cellSize / 2) + 10
 
     context.fillStyle = '#ee2222'
@@ -371,80 +406,6 @@ function drawMessageBox(context){
     context.fillText(Game.message, (Game.width * Game.cellSize)/2, (Game.height * Game.cellSize) + 32)
 }
 
-function createFieldElement(){
-    const table = document.createElement('table');
-    for (let i = 0; i < Game.height; i++) {
-        const tr = document.createElement('tr')
-    
-        for (let j = 0; j < Game.width; j++) {
-            const index = calculateIndex(i, j)
-            const td = document.createElement('td')
-
-            if(Game.field[index].opened){
-                td.className = 'open'
-            } else {
-                td.className = 'closed'
-            }
-
-            let symbol = Game.field[index].value
-            
-            if (symbol == 0) {
-                symbol = '&nbsp;'
-                td.style.color = Game.colors['0']
-            } else if (symbol == -1) {
-                symbol = '&ofcir;'
-                td.style.color = Game.colors.bomb
-            } else {
-                td.style.color = Game.colors[symbol]
-            }
-            
-            if (Game.field[index].marked) {
-                td.className = 'marked'
-                symbol = '&trianglelefteq;'
-                td.style.color = Game.colors.bomb
-            }
-
-            td.innerHTML = symbol
-            td.id = 'cell-' + index
-            
-            td.onclick = () => {
-                openCell(index)
-            }
-            td.onauxclick = (e) => {
-                e.preventDefault()
-                toggleMarkCell(index)
-                draw()
-            }
-            td.oncontextmenu = (e) => {
-                e.preventDefault()
-            }
-
-            tr.appendChild(td)
-        }
-        table.appendChild(tr)
-    }
-
-    const messageContainer = document.createElement('div')
-    messageContainer.className = 'message'
-    messageContainer.innerHTML = Game.message
-    messageContainer.onclick = () => { Game.messageFunction() }
-
-
-    // const fieldContainer = document.createElement('main')
-    return { 
-        table: table,
-        message: messageContainer,
-    }
-}
-
-function createCanvas(){
-    const canvas = document.createElement('canvas')
-    canvas.width = Game.width * Game.cellSize;
-    canvas.height = (Game.height + 1) * Game.cellSize;
-
-    document.querySelector('#root').appendChild(canvas)
-}
-
 function updateSettings(){
     Game.height = parseInt(document.getElementById('rows').value)
     Game.width = parseInt(document.getElementById('columns').value)
@@ -455,24 +416,22 @@ function updateSettings(){
 
 function messagePlayer(message){
     Game.message = message
-    draw()
 }
 
+function handleEvent(event, cellFunction = (cellIndex) => {}, messageFunction = () => {}){
+    event.preventDefault()
+    const x = parseInt(event.layerX / Game.cellSize)
+    const y = parseInt(event.layerY / Game.cellSize)
 
-init()
-createCanvas()
-draw()
-drawInCanvas()
-
-document.querySelector('canvas').addEventListener('click', ({ layerX, layerY }) => {
-    const x = parseInt(layerX / Game.cellSize)
-    const y = parseInt(layerY / Game.cellSize)
-    console.log({x, y, w: Game.width, h: Game.height})
     if(x < Game.width && y < Game.height){
         const index = calculateIndex(y, x)
-        openCell(index)
+        cellFunction(index)
     } else {
-        Game.messageFunction()
+        messageFunction()
     }
-    // console.log(calculateIndex(y, x))
-})
+}
+
+init()
+drawInCanvas()
+
+
