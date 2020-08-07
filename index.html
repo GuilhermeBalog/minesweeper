@@ -9,7 +9,25 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <aside class="controls">
+            <h1>Minesweeper</h1>
+            <div class="input-block">
+                <label for="rows">rows</label>
+                <input type="number" name="rows" id="rows" value="8">
+            </div>
+            <div class="input-block">
+                <label for="columns">columns</label>
+                <input type="number" name="columns" id="columns" value="10">
+            </div>
+            <div class="input-block">
+                <label for="bombs">bombs</label>
+                <input type="number" name="bombs" id="bombs" value="10">
+            </div>
+            <button onclick="updateSettings()">Save and Play</button>
+        </aside>
+        <main></main>
+    </div>
     <script src="index.js"></script>
 </body>
 </html>
