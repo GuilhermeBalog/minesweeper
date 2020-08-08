@@ -3,6 +3,7 @@
     padding: 0;
     outline: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: #00000000;
 }
 
 html, body{
@@ -15,39 +16,68 @@ body{
 }
 
 #root{
-    display: flex;
     min-height: 100%;
+    display: flex;
+    flex-direction: column;
     justify-content: space-around;
     align-items: center;
 }
 
 
-aside{
-    background-color: #FFF;
-    padding: 2rem 1rem;
+nav{
+    background-color: #cecece;
+    padding: 5px;
+    max-width: 500px;
+    width: 90%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-width: 5px;
+    border-style: solid;
+    border-bottom-color: #808080;
+    border-right-color: #808080;
+    border-top-color: #FFF;
+    border-left-color: #FFF;
 }
 
-aside h1{
+nav h1{
     text-align: center;
+    margin-bottom: 0.5em;
+}
+
+.row{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .input-block{
-    margin: 1rem 0;
+    margin-right: 10px;
+    margin-bottom: 10px;
 }
 
-aside .input-block label{
+nav .input-block label{
     display: block;
     text-transform: capitalize;
+    text-align: center;
 }
 
-aside .input-block input{
-    padding: 0.3rem;
-    width: 100%;
+nav .input-block input{
+    padding: 5px;
+    width: 70px;
+    text-align: center;
+    font-size: 15px;
 }
 
-aside button{
-    width: 100%;
-    padding: 1rem 0;
+.button-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+nav button{
+    margin-top: 1;
+    padding: 8px;
     border: 0;
     background-color: #ff6347;
     color: #FFF;
@@ -56,72 +86,30 @@ aside button{
     transition: background-color 0.5s;
 }
 
-button:hover{
+nav button:hover{
     background-color: #d34931;
 }
 
-table{
-    border-collapse: separate;
-    background-color: #808080;
-}
-
-td{
-    border-width: 0.3rem;
-    border-style: solid;
-    border-bottom-color: #808080;
-    border-right-color: #808080;
-    border-left-color: #ffffff;
-    border-top-color: #ffffff;
-    text-align: center;
-    cursor: pointer;
-    background-color: #cecece;
-    user-select: none;
-    font-weight: bold;
-    font-size: 1.5rem;
-    width: 50px;
-    height: 50px;
-}
-
-td.closed{
-    color: rgba(0, 0, 0, 0) !important;
-}
-
-td.open{
-    background-color: #acacac;
-    border-color: #acacac;
-    border-width: 0.2rem;
-    cursor: default;
-}
-
-.message{
-    background-color: #cecece;
-    padding: 0.75rem;
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: #555454;
-    text-align: center;
-    border-width: 0.3rem;
-    border-style: solid;
-    border-bottom-color: #808080;
-    border-right-color: #808080;
-    border-left-color: #ffffff;
-    border-top-color: #ffffff;
-    cursor: pointer;
-}
-
 canvas{
-    border: 1px solid #808080;
     cursor: pointer;
+    width: 90%;
+    max-width: 500px;
 }
 
-@media (max-width: 680px){
-    #root{
-        flex-direction: column-reverse;
-        justify-content: center;
-        align-items: center;
-    }
-    aside{
-        padding: 1rem 1rem;
-        width: 90%;
-    }
+footer{
+	display: flex;
+    justify-content: center;
+}
+
+footer a{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #000;
+	text-decoration: none;
+}
+
+footer img{
+	height: 2em;
+	margin-right: 10px;
 }

@@ -10,25 +10,33 @@
 </head>
 <body>
     <div id="root">
-        <aside class="controls">
+        <nav>
             <h1>Minesweeper</h1>
-            <div class="input-block">
-                <label for="rows">rows</label>
-                <input type="number" name="rows" id="rows" value="8">
+            <div class="row">
+                <div class="input-block">
+                    <label for="rows">Rows</label>
+                    <input type="number" name="rows" id="rows" value="8">
+                </div>
+                <div class="input-block">
+                    <label for="columns">Columns</label>
+                    <input type="number" name="columns" id="columns" value="10">
+                </div>
+                <div class="input-block">
+                    <label for="bombs">Bombs</label>
+                    <input type="number" name="bombs" id="bombs" value="10">
+                </div>
+                <div class="button-container">
+                    <button onclick="updateSettings()">Save and Play</button>
+                </div>
             </div>
-            <div class="input-block">
-                <label for="columns">columns</label>
-                <input type="number" name="columns" id="columns" value="10">
-            </div>
-            <div class="input-block">
-                <label for="bombs">bombs</label>
-                <input type="number" name="bombs" id="bombs" value="10">
-            </div>
-            <button onclick="updateSettings()">Save and Play</button>
-        </aside>
-        <main>
-            <canvas></canvas>
-        </main>
+        </nav>
+        <canvas></canvas>
+        <footer>
+            <a href="https://guilhermebalog.github.io">
+				<img src="https://guilhermebalog.github.io/favicon.ico">
+				Guilherme Balog Gardino
+			</a>
+        </footer>
     </div>
     <script src="index.js"></script>
 </body>

@@ -251,27 +251,18 @@ function resetGame(){
     init()
 }
 
-// render methods
-function draw(){
-    return
-    Game.containerElement.innerHTML = ''
-    const { table, message } = createFieldElement()
-    Game.containerElement.appendChild(table)
-    Game.containerElement.appendChild(message)
-}
-
 function calculateIndex(i, j){
     return (i * Game.width) + j
 }
 
-function drawInCanvas(){
+function draw(){
     const context = Game.canvas.getContext('2d')
     context.clearRect(0, 0, Game.canvas.width, Game.canvas.height)
     
     drawField(context)
     drawMessageBox(context)
 
-    requestAnimationFrame(() => { drawInCanvas() })
+    requestAnimationFrame(() => { draw() })
 }
 
 function drawField(context){
@@ -351,7 +342,7 @@ function drawClosedCell(context, x, y, width, height){
 }
 
 function drawOpenedCell(context, x, y, cellSize, color, symbol){
-    const borderThickeness = 2
+    const borderThickeness = 1
 
     drawBorder()
     drawBackground()
@@ -367,8 +358,8 @@ function drawOpenedCell(context, x, y, cellSize, color, symbol){
         context.fillRect(
             x + borderThickeness, 
             y + borderThickeness, 
-            cellSize - borderThickeness, 
-            cellSize - borderThickeness
+            cellSize - (2 * borderThickeness), 
+            cellSize - (2 * borderThickeness)
         )
     }
 
@@ -420,8 +411,9 @@ function messagePlayer(message){
 
 function handleEvent(event, cellFunction = (cellIndex) => {}, messageFunction = () => {}){
     event.preventDefault()
-    const x = parseInt(event.layerX / Game.cellSize)
-    const y = parseInt(event.layerY / Game.cellSize)
+    const x = parseInt((event.layerX * Game.width) / event.target.clientWidth)
+    const y = parseInt((event.layerY * (Game.height + 1)) / event.target.clientHeight)
+    console.log({ x, y })
 
     if(x < Game.width && y < Game.height){
         const index = calculateIndex(y, x)
@@ -432,6 +424,4 @@ function handleEvent(event, cellFunction = (cellIndex) => {}, messageFunction = 
 }
 
 init()
-drawInCanvas()
-
-
+draw()
