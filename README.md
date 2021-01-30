@@ -2,11 +2,11 @@
 
 Web version of the classic Minesweeper
 
-![Minesweeper](screenshoot.png)
+![Minesweeper](screenshot.png)
 
 ## Getting Started
 
-- Clone the repositorie with
+- Clone the repository with
 
 ```bash
 git clone https://github.com/GuilhermeBalog/minesweeper.git
@@ -36,9 +36,9 @@ gameOver: false,
 
 I decided that the field array would be a one dimension array, so its length is `width * height`.
 
-Each cell has a value (0 is the default) that represents how many bombs there are arround it and a boolean attribute to control if it's open
+Each cell has a value (0 is the default) that represents how many bombs there are around it and a boolean attribute to control if it's open
 
-### Initing the field
+### initializing the field
 
 ```js
 // snippet of the initField() method
@@ -54,7 +54,7 @@ To place the bombs randomly, the value of `field[0]` to `field[bombs - 1]` is -1
 ```js
 // snippet of the placeBombs() method
 for (let i = 0; i < this.bombs; i++) {
-  this.field[i].value = -1 
+  this.field[i].value = -1
 }
 this.field.sort((a, b) => {
   return 0.5 - Math.random()
@@ -81,11 +81,11 @@ placeNumbers()
 
 When the player open a cell there are 3 basic options: its a bomb, or its a number between 1 and 8, or its a zero
 
-- if its a bomb, all the others bombs are openend too and the game is ended
+- if its a bomb, all the others bombs are opened too and the game is ended
 - if its a number between 1 and 8 just the selected cell is opened
-- if its a zero all the non-bomb celss around are opened recursively
+- if its a zero all the non-bomb cells around are opened recursively
 
-In any case `opened` attribute of the cell is setted to `true`
+In any case `opened` attribute of the cell is set to `true`
 
 ```js
 //snippet of the openCell(index) method
@@ -109,7 +109,7 @@ if (this.field[index].value == 0) {
 
 ### Finishing the game
 
-The game is finshed when the player loses openning a bomb or wins when all the non-bomb cells are opened
+The game is finished when the player loses opening a bomb or wins when all the non-bomb cells are opened
 
 ```js
 checkWin: function () {
@@ -124,11 +124,11 @@ checkWin: function () {
 
 ### Visual Methods
 
-I tried to make a low coupling program, spliting data methods and visual methods, so the visual methods doesn't change the data.
+I tried to make a low coupling program, splitting data methods and visual methods, so the visual methods doesn't change the data.
 
 The main visual method is `draw`. It render the controls and the field and it's called by many other methods.
 
-`createFieldElement` returns a HTML element with the rendered game field as a table. 
+`createFieldElement` returns a HTML element with the rendered game field as a table.
 
 The bombs are rendered as &ofcir; characters and the zeros are rendered as white spaces
 
